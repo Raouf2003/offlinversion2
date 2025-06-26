@@ -103,15 +103,18 @@
       }
     }
 
-    function enterGroup() {
-      currentGroup = document.getElementById('groupSelect').value;
-      if (!currentGroup) return;
-      document.getElementById('groupTitle').textContent = currentGroup;
-      document.getElementById('groupSelection').classList.add('hidden');
-      document.getElementById('studentSection').classList.remove('hidden');
-      renderStudents();
-    }
+   function enterGroup() {
+  currentGroup = document.getElementById('groupSelect').value;
+  if (!currentGroup) return;
 
+  document.getElementById('groupTitle').textContent = currentGroup;
+  document.getElementById('groupSelection').classList.add('hidden');
+  document.getElementById('studentSection').classList.remove('hidden');
+  renderStudents();
+
+  // أضف الحالة الجديدة في التاريخ
+  history.pushState({ page: 'group' }, '', '');
+}
     function backToGroups() {
       currentGroup = '';
       document.getElementById('studentSection').classList.add('hidden');
@@ -217,6 +220,8 @@ function toggleCard(index) {
             </div>
           </div>
         </div>`;
+        history.pushState({ page: 'edit' }, '', '');
+
     }
 
     function updateScore(index, field) {
@@ -279,6 +284,7 @@ function toggleCard(index) {
 
     // Register service worker
     window.onload = () => {
+      history.replaceState({ page: 'home' }, '', '');
       Object.keys(students).forEach(group => {
         const option = document.createElement('option');
         option.value = group;
@@ -292,6 +298,17 @@ function toggleCard(index) {
           .catch(err => console.error('Service Worker failed:', err));
       }
     };
+    // التعامل مع زر الرجوع في الهاتف أو المتصفح
+window.addEventListener('popstate', function (e) {
+  if (!e.state) return;
+
+  if (e.state.page === 'group') {
+    backToGroups();
+  } else if (e.state.page === 'edit') {
+    renderStudents();
+  }
+});
+
   </script>
 </body>
 
